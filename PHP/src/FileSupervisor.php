@@ -28,19 +28,26 @@ class FileSupervisor
   }
   function runCheck(){
     foreach ($this -> fileNameRegExps as $fileRegExp) {
-      $matchedFiles = glob($fileRegExp);
+      // $matchedFiles = glob($fileRegExp);
+      $matchedFiles = $this->rsearch($fileRegExp->path,"/{$fileRegExp->file}/");
+      print_r($matchedFiles);
       $this -> checkFilesByName($matchedFiles);
     }
     $statsHandler = fopen($this -> statusFileName,"w+");
     foreach ($this -> stats as $key => $line){
-      $record = explode(',',$line);
-      array_unshift($record,$key);
-      fputcsv($statsHandler,$record);
+      @$record = explode(',',$line);
+      @array_unshift($record,$key);
+      @fputcsv($statsHandler,$record);
     }
     fclose($statsHandler);
   }
   private function checkFilesByName($filePaths){
     foreach ($filePaths as $filePath) {
+      $filePath = realpath($filePath);
+      var_dump($filePath);
+      if(!is_file($filePath)){
+        continue;
+      }
       switch ($this -> checkChanges($filePath)) {
         case 0:
         array_push($this -> checkResult,[$filePath,'UNCHANGED']);
@@ -73,6 +80,22 @@ class FileSupervisor
       fputcsv($fhandle,$line);
     }
     fclose($fhandle);
+  }
+  private function rsearch($folder, $pattern) {
+    $folder = realpath($folder);
+    echo "RESEARCH: {$folder} FOR {$pattern}";
+    $dir = new RecursiveDirectoryIterator($folder);
+    $ite = new RecursiveIteratorIterator($dir);
+    $files = new RegexIterator($ite, $pattern, RegexIterator::GET_MATCH);
+    $fileList = array();
+    $parent = realpath($folder.'/..');
+    echo $parent;
+    foreach($files as $file) {
+      $real = realpath($file[0]);
+      if($real == $parent)continue;
+      $fileList[] = $real;
+    }
+    return $fileList;
   }
 }
 ?>

@@ -2,6 +2,7 @@
 testTree
 result.csv
 filesStatus.csv
+output.txt
 
 # Windows image file caches
 Thumbs.db
