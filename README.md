@@ -7,7 +7,15 @@ FileSupervisor is a simple tool that allows you to easily detect new and modifie
 $fs = new FileSupervisor(string $statusFileName, Array $fileNameRegExps);
 ```
 * `$statusFileName` `string` - path to CSV file with current checksums of files to be checked. This file will be overwritten during the execution of checking.
-* `Array $fileNameRegExps` `Array of string` - contains strings of regular expressions that represent files to be checked.
+* `Array $fileNameRegExps` `Array of Objects` - object structure
+```json
+{
+  "path":".",
+  "file":"filename"
+}
+```
+path - path to search in
+file - regex representing the file name 
 
 ### Public Methods
 * `runCheck()` - runs the check

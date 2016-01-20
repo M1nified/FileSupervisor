@@ -1,6 +1,6 @@
 <?php
 /**
-* FileSupervisor Class
+* FileSupervisor Class PHP <5.3
 */
 class FileSupervisor
 {
